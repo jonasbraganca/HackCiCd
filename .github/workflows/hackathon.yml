@@ -31,9 +31,27 @@ jobs:
           
       - name: Run Tests 🔎
         run: npm run test
-    
-  deploy:
+  build:
+    runs-on: ubuntu-latest
     needs: test
+    steps:
+      - name: Checkout 🛎️ 
+        uses: actions/checkout@v4
+      
+      - name: Configure Node
+        uses: actions/setup-node@v3
+        with: 
+          node-version: '18'
+      - name: Run Build
+        run:  npm run build
+
+      - name: Upload artifact
+        uses: action/upload-pages-artifact@v1
+        with: 
+          patth: './build'
+          
+  deploy:
+    needs: build
     environment:
       name: github-pages
      # url: ${{ steps.deployment.outputs.page_url }}
@@ -45,11 +63,13 @@ jobs:
        - name: Setup Pages
          uses: actions/configure-pages@v3
          
-       - name: Upload artifact
-         uses: actions/upload-pages-artifact@v1
-         with:
+     #  - name: Upload artifact
+      #   uses: actions/upload-pages-artifact@v1
+       #  with:
           # Upload entire repository
-          path: './public'
+         # path: './public'
        - name: Deploy to GitHub Pages
          id: deployment
          uses: actions/deploy-pages@v1
+         with: 
+           enablement: true
